@@ -1,0 +1,70 @@
+<Window x:Class="RevitDowngrader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Revit Downgrader - IFC round-trip to Revit 2023"
+        Width="920" Height="680" MinWidth="760" MinHeight="520"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Folder selector -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="FolderBox" Grid.Column="0" Height="28" VerticalContentAlignment="Center"
+                     ToolTip="Folder containing .rvt / .rfa files saved in Revit 2024 or newer" />
+            <Button x:Name="BrowseButton" Grid.Column="1" Content="Browse..." Width="90" Height="28"
+                    Margin="8,0,0,0" Click="BrowseButton_Click" />
+        </Grid>
+
+        <!-- Options -->
+        <WrapPanel Grid.Row="1" Margin="0,10,0,0">
+            <TextBlock Text="Newer Revit (IFC export):" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox x:Name="NewerVersionCombo" Width="110" ItemStringFormat="Revit {0}" />
+            <TextBlock x:Name="LegacyStatusText" Margin="16,0,0,0" VerticalAlignment="Center" />
+            <CheckBox x:Name="SubfoldersCheck" Content="Include subfolders" Margin="16,0,0,0"
+                      IsChecked="True" VerticalAlignment="Center" />
+            <CheckBox x:Name="KeepIfcCheck" Content="Keep IFC files" Margin="16,0,0,0"
+                      VerticalAlignment="Center" />
+        </WrapPanel>
+
+        <!-- Notice -->
+        <TextBlock Grid.Row="2" Margin="0,10,0,0" TextWrapping="Wrap" Foreground="#555555"
+                   Text="Revit will open on screen during processing - please do not interact with it. IFC round-trips are lossy: views, sheets, schedules and native families are not preserved. Results are written to a 'Revit2023_Downgraded' folder inside the selected folder, together with a CSV validation report. Your originals are never modified. Family files (.rfa) are skipped." />
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,12,0,0">
+            <Button x:Name="StartButton" Content="Start Downgrade" Width="140" Height="32" Click="StartButton_Click" />
+            <Button x:Name="CancelButton" Content="Cancel" Width="90" Height="32" Margin="8,0,0,0"
+                    IsEnabled="False" Click="CancelButton_Click" />
+            <Button x:Name="OpenReportButton" Content="Open report" Width="110" Height="32" Margin="24,0,0,0"
+                    IsEnabled="False" Click="OpenReportButton_Click" />
+            <Button x:Name="OpenOutputButton" Content="Open output folder" Width="140" Height="32" Margin="8,0,0,0"
+                    IsEnabled="False" Click="OpenOutputButton_Click" />
+        </StackPanel>
+
+        <!-- Progress -->
+        <Grid Grid.Row="4" Margin="0,12,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ProgressBar x:Name="RunProgress" Grid.Row="0" Height="18" Minimum="0" Maximum="100" />
+            <TextBlock x:Name="StatusText" Grid.Row="1" Margin="0,4,0,0" Text="Ready" />
+        </Grid>
+
+        <!-- Log -->
+        <TextBox x:Name="LogBox" Grid.Row="5" Margin="0,10,0,0" IsReadOnly="True"
+                 FontFamily="Consolas" FontSize="12" TextWrapping="NoWrap"
+                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+    </Grid>
+</Window>

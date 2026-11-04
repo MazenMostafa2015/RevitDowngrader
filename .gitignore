@@ -1,0 +1,31 @@
+# Build output
+bin/
+obj/
+staging/
+dist/
+.tools/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# NuGet
+*.nupkg
+packages/
+
+# Revit / test data - never commit models
+*.rvt
+*.rfa
+*.rte
+*.rft
+*.ifc
+*.0*.rvt
+*.0*.rfa
+
+# Logs / OS
+*.log
+Thumbs.db
+.DS_Store

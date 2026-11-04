@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Build-Installer.ps1 passes RevitYear / AddinTfm once per Revit release. -->
+    <RevitYear Condition="'$(RevitYear)' == ''">2023</RevitYear>
+    <AddinTfm Condition="'$(AddinTfm)' == ''">net48</AddinTfm>
+
+    <TargetFramework>$(AddinTfm)</TargetFramework>
+    <AssemblyName>RevitDowngrader.Addin</AssemblyName>
+    <RootNamespace>RevitDowngrader.Addin</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>none</DebugType>
+    <DefineConstants>$(DefineConstants);REVIT$(RevitYear)</DefineConstants>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>bin\$(RevitYear)\</OutputPath>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <RevitInstallDir>$(ProgramW6432)\Autodesk\Revit $(RevitYear)</RevitInstallDir>
+  </PropertyGroup>
+
+  <!-- Revit API: prefer the DLLs from the local Revit installation (always the exact right build). -->
+  <ItemGroup Condition="Exists('$(RevitInstallDir)\RevitAPI.dll')">
+    <Reference Include="RevitAPI">
+      <HintPath>$(RevitInstallDir)\RevitAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(RevitInstallDir)\RevitAPIUI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Fallback when that Revit release is not installed on the build machine: public NuGet API packages. -->
+  <ItemGroup Condition="!Exists('$(RevitInstallDir)\RevitAPI.dll')">
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitYear).*" ExcludeAssets="runtime" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitYear).*" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <!-- Revit 2023 / 2024 run on .NET Framework 4.8 -->
+  <ItemGroup Condition="'$(AddinTfm)' == 'net48'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="System.Xaml" />
+  </ItemGroup>
+
+  <!-- Revit 2025+ run on modern .NET -->
+  <PropertyGroup Condition="'$(AddinTfm)' != 'net48'">
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+</Project>
